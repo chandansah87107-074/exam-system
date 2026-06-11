@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Online Exam</title>
+    <style>
+        body { font-family: Arial; background:#f4f4f4; padding:20px;}
+        .box { background:white; padding:20px; border-radius:10px; max-width:700px; margin:auto;}
+        button { padding:10px; margin-top:10px;}
+    </style>
+</head>
+
+<body>
+
+<div class="box" id="login">
+    <h2>Start Exam</h2>
+    <input id="name" placeholder="Enter Name">
+    <button onclick="start()">Start</button>
+</div>
+
+<div class="box" id="exam" style="display:none;">
+    <h3 id="student"></h3>
+    <h4 id="q"></h4>
+    <div id="opt"></div>
+    <button onclick="next()">Next</button>
+</div>
+
+<div class="box" id="result" style="display:none;">
+    <h2 id="score"></h2>
+</div>
+
+<script>
+
+let questions = JSON.parse(localStorage.getItem("questions")) || [];
+
+let i=0, score=0, selected=-1;
+
+function start(){
+    let name=document.getElementById("name").value;
+    if(name===""){alert("Enter name"); return;}
+
+    document.getElementById("login").style.display="none";
+    document.getElementById("exam").style.display="block";
+    document.getElementById("student").innerText=name;
+
+    load();
+}
+
+function load(){
+    selected=-1;
+    let q=questions[i];
+
+    document.getElementById("q").innerText=(i+1)+". "+q.q;
+
+    let html="";
+    q.options.forEach((o,index)=>{
+        html+=`<div>
+        <input type="radio" name="o" onclick="selected=${index}"> ${o}
+        </div>`;
+    });
+
+    document.getElementById("opt").innerHTML=html;
+}
+
+function next(){
+    if(selected===questions[i].answer) score++;
+
+    i++;
+    if(i<questions.length){
+        load();
+    }else{
+        document.getElementById("exam").style.display="none";
+        document.getElementById("result").style.display="block";
+        document.getElementById("score").innerText="Score: "+score+"/"+questions.length;
+    }
+}
+
+</script>
+
+</body>
+</html>
